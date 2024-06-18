@@ -1,8 +1,10 @@
 'use client'
 
-import { useState } from 'react';
+import fondo from '@/public/img/fondo_login.jpg';
+import Logo from '@/public/img/10code_logo.jpg';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -30,11 +32,17 @@ export default function Register() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex items-center justify-center min-h-screen">
+            <Image
+                src={fondo}
+                alt="Logo de la empresa 10Code"
+                fill={true}
+                className="mx-auto -z-10"
+            />
             <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
                 <Link href="/home">
                     <Image
-                        src="/assets/img/10code_logo.jpg"
+                        src={Logo}
                         alt="Logo de la empresa 10Code"
                         width={244}
                         height={67}
@@ -97,7 +105,7 @@ export default function Register() {
                     <div>
                         <button
                             type="submit"
-                            className="w-full px-4 py-2 text-white bg-secondary-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            className="w-full px-4 py-2 text-white bg-secondary-500 rounded-md shadow-sm hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? 'Registrando...' : 'Registrarse'}

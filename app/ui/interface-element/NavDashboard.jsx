@@ -6,14 +6,13 @@ import message_icon from '@/public/img/message_icon.png';
 import notificication_icon from '@/public/img/notificication_icon.png';
 import { useAuth } from '@/hooks/auth';
 
-
 import white_logo from '@/public/img/logo-blanco.png';
 
 import Image from 'next/image';
 
 export default function NavDashboard() {
 
-    const { user, logout } = useAuth({ middleware: 'guest', redirectIfAuthenticated: '' });
+    const { user, logout } = useAuth({ middleware: 'auth', redirectIfNotAuthenticated: '/login' });
 
     return(
         <div className="mx-auto px-1 sm:px-3 lg:px-5 bg-primary-600 text-white absolute w-full">

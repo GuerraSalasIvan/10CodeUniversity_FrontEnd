@@ -1,12 +1,16 @@
 'use client';
 
+
 import { faEyeSlash, faEye } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import fondo from '@/public/img/fondo_login.jpg';
+import Logo from '@/public/img/10code_logo.jpg';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth';
 import Image from "next/image";
 import Link from 'next/link';
+
 
 const Login = () => {
     const router = useRouter();
@@ -49,11 +53,18 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+
+        <div className="min-h-screen flex flex-col justify-center items-center">
+            <Image
+                src={fondo}
+                alt="Logo de la empresa 10Code"
+                fill={true}
+                className="mx-auto -z-10"
+            />
             <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8">
                 <div className="mb-6 text-center">
                     <Image
-                        src="/assets/img/10code_logo.jpg"
+                        src={Logo}
                         alt="Logo de la empresa 10Code"
                         className="mx-auto"
                         width={244}
@@ -100,7 +111,7 @@ const Login = () => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className="w-full bg-secondary-500 hover:bg-secondary-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
                             {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
                         </button>
