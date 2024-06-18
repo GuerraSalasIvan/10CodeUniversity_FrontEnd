@@ -1,118 +1,117 @@
-'use client'
+'use client';
 
-// pages/register.js
-
-import { useState } from 'react';
+import { faEyeSlash, faEye } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/auth';
-import Image from 'next/image';
+import Image from "next/image";
 import Link from 'next/link';
 
-export default function Register() {
+const Login = () => {
     const router = useRouter();
-    const { register } = useAuth({ middleware: 'guest', redirectIfAuthenticated: '/dashboard' });
-    const [name, setName] = useState('');
+
+    const { login } = useAuth({
+        middleware: 'guest',
+        redirectIfAuthenticated: '/dashboard',
+    });
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [status, setStatus] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleSubmit = async (event) => {
+    useEffect(() => {
+        if (router.reset?.length > 0 && Object.keys(errors).length === 0) {
+            setStatus(atob(router.reset));
+        } else {
+            setStatus(null);
+        }
+    }, [router.reset, errors]);
+
+    const submitForm = async event => {
         event.preventDefault();
         setIsSubmitting(true);
 
-        await register({
-            name,
-            email,
-            password,
-            setErrors,
-        });
-
-        setIsSubmitting(false);
+        try {
+            await login({
+                email,
+                password,
+                setErrors,
+                setStatus,
+            });
+        } catch (error) {
+            setErrors({ general: 'Email o contraseña incorrectos' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-                <Link href="/home">
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100">
+            <div className="max-w-md w-full bg-white shadow-md rounded-lg p-8">
+                <div className="mb-6 text-center">
                     <Image
                         src="/assets/img/10code_logo.jpg"
                         alt="Logo de la empresa 10Code"
+                        className="mx-auto"
                         width={244}
                         height={67}
-                        className="mx-auto mb-8"
+                        style={{ width: '244px', height: '67px' }}
                     />
-                </Link>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                            Nombre
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            required
-                            autoFocus
-                        />
-                        {errors.name && <div className="mt-2 text-sm text-red-600">{errors.name}</div>}
-                    </div>
-
-                    <div className="space-y-2">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                            Correo electrónico
-                        </label>
+                </div>
+                <form onSubmit={submitForm}>
+                    {status && <div className="mb-4 text-green-500">{status}</div>}
+                    <div className="mb-4">
+                        <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email</label>
                         <input
                             id="email"
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            onChange={event => setEmail(event.target.value)}
                             required
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
                         />
-                        {errors.email && <div className="mt-2 text-sm text-red-600">{errors.email}</div>}
+                        {errors.email && <div className="text-red-500 mt-2">{errors.email}</div>}
                     </div>
-
-                    <div className="space-y-2">
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                            Contraseña
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            required
-                        />
-                        {errors.password && <div className="mt-2 text-sm text-red-600">{errors.password}</div>}
-                    </div>
-
-                    {errors.general && (
-                        <div className="mt-4 text-sm text-red-600">
-                            {errors.general}
+                    <div className="mb-4">
+                        <label htmlFor="password" className="block text-gray-700 font-bold mb-2">Contraseña</label>
+                        <div className="relative">
+                            <input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={event => setPassword(event.target.value)}
+                                required
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring focus:border-blue-300"
+                            />
+                            <div id="icono-toggle" className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
+                                <FontAwesomeIcon icon={faEyeSlash} className="cursor-pointer" />
+                            </div>
                         </div>
-                    )}
-
+                        {errors.password && <div className="text-red-500 mt-2">{errors.password}</div>}
+                    </div>
+                    {errors.general && <div className="mb-4 text-red-500">{errors.general}</div>}
+                    <div className="flex items-center justify-between mb-4">
+                        <Link href="/forgot-password" className="text-sm text-blue-500 hover:underline">¿Olvidaste tu contraseña?</Link>
+                    </div>
                     <div>
                         <button
                             type="submit"
-                            className="w-full px-4 py-2 text-white bg-secondary-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             disabled={isSubmitting}
+                            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            {isSubmitting ? 'Registrando...' : 'Registrarse'}
+                            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
                         </button>
                     </div>
                 </form>
-                <div className="text-center">
-                    ¿Ya tienes cuenta?{' '}
-                    <Link href="/login">
-                        <p className="text-indigo-600 hover:text-indigo-500">Inicia sesión aquí</p>
-                    </Link>
+                <div className="mt-6 text-center">
+                    <p>¿No tienes cuenta? <Link href="/register" className="text-blue-500 hover:underline">Crear cuenta</Link></p>
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default Login;
